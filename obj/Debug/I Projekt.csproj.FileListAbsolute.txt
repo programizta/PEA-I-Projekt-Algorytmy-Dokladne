@@ -1,0 +1,21 @@
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe.config
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.pdb
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csprojAssemblyReference.cache
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csproj.CoreCompileInputs.cache
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.exe
+C:\Users\Piotr\Desktop\Studia 7 semestr\Projektowanie Efektywnych Algorytmów\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.pdb
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe.config
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.pdb
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csprojAssemblyReference.cache
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csproj.CoreCompileInputs.cache
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.exe
+C:\Users\Piotr\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.pdb
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe.config
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.exe
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\bin\Debug\I Projekt.pdb
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csprojAssemblyReference.cache
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.csproj.CoreCompileInputs.cache
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.exe
+C:\Users\Peter\Desktop\I projekt - algorytmy dokładne\I Projekt\obj\Debug\I Projekt.pdb
