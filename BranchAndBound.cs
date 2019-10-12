@@ -1,9 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace I_Projekt
 {
     class BranchAndBound : Graph
     {
+        /// <summary>
+        /// Item1 - indeks
+        /// Item2 - koszt drogi
+        /// </summary>
+        public List<Tuple<int, int>> NotVisitedVertexes { get; set; }
+        /// <summary>
+        /// Item1 - indeks
+        /// Item2 - macierz kosztów
+        /// </summary>
+        public List<Tuple<int, int[,]>> ListOfCostMatrixes { get; set; }
         public Stack Route { get; private set; }
         bool[] visited;
         private int[] smallestNumbersInRows;
@@ -12,12 +23,13 @@ namespace I_Projekt
         private bool[,] auxNeighborhoodMatrix;
         int optimumNewTravelCost;
         int[,] costMatrixBeforeUpdate;
-        int[,] veryLastOptimumCostMatrix;
         int optimumVertex;
-
+        int valueOfTravelOnLevel;
         public BranchAndBound(string filename, int choice) : base(filename, choice)
         {
             Route = new Stack();
+            NotVisitedVertexes = new List<Tuple<int, int>>();
+            ListOfCostMatrixes = new List<Tuple<int, int[,]>>();
 
             smallestNumbersInRows = new int[numOfCities];
             smallestNumbersInColumns = new int[numOfCities];
@@ -28,7 +40,6 @@ namespace I_Projekt
             visited = new bool[numOfCities];
             optimumNewTravelCost = int.MaxValue;
             costMatrixBeforeUpdate = new int[numOfCities, numOfCities];
-            veryLastOptimumCostMatrix = new int[numOfCities, numOfCities];
             optimumVertex = -1;
 
             for (int i = 0; i < numOfCities; i++)
@@ -80,7 +91,7 @@ namespace I_Projekt
             {
                 for (int j = 0; j < numOfCities; j++)
                 {
-                    if (auxCostMatrix[i, j] != int.MaxValue) auxCostMatrix[j, i] -= smallestNumbersInColumns[i];
+                    if (auxCostMatrix[i, j] != int.MaxValue) auxCostMatrix[i, j] -= smallestNumbersInColumns[j];
                 }
             }
         }
@@ -144,6 +155,32 @@ namespace I_Projekt
             }
         }
 
+        private int GetOptimumVertexIndex()
+        {
+            valueOfTravelOnLevel = int.MaxValue;
+            int index = -1;
+
+            foreach (var tuple in NotVisitedVertexes)
+            {
+                if (tuple.Item2 <= valueOfTravelOnLevel && !visited[tuple.Item1])
+                {
+                    valueOfTravelOnLevel = tuple.Item2;
+                    index = tuple.Item1;
+                }
+            }
+
+            return index;
+        }
+
+        private int[,] GetOptimumCostMatrix(int index)
+        {
+            foreach (var tupple in ListOfCostMatrixes)
+            {
+                if (tupple.Item1 == index) return tupple.Item2;
+            }
+            return null;
+        }
+
         public void StartBranchAndBound(int startingVertex)
         {
             FindSmallestNumbersInRows(auxCostMatrix);
@@ -156,16 +193,16 @@ namespace I_Projekt
             Route.Push(startingVertex);
             visited[startingVertex] = true;
 
-            FindBestAdjacent(0, 0, 0, firstTravelCost);
+            FindBestAdjacent(0, firstTravelCost, auxCostMatrix);
         }
 
-        public void FindBestAdjacent(int currentVertexLevel, int startingVertex, int currentVertex, int currentTravelCost)
+        public void FindBestAdjacent(int currentVertex, int currentTravelCost, int[,] currentMatrix)
         {
-            int level = currentVertexLevel;
             int valueOfReducingRows;
             int valueOfReducingColumns;
             int newTravelCost;
-            CopyMatrixFromTo(auxCostMatrix, costMatrixBeforeUpdate);
+            CopyMatrixFromTo(currentMatrix, costMatrixBeforeUpdate);
+            int[,] costMatrixOnLevel = new int[numOfCities, numOfCities];
 
             if (Route.StackSize < numOfCities)
             {
@@ -173,37 +210,36 @@ namespace I_Projekt
                 {
                     if (!visited[i] && currentVertex != i)
                     {
+                        CopyMatrixFromTo(costMatrixBeforeUpdate, currentMatrix);
                         SetInfinityInRowAndColumn(currentVertex, i);
                         SetInfinityInCell(i, currentVertex);
-                        FindSmallestNumbersInRows(auxCostMatrix);
+                        FindSmallestNumbersInRows(currentMatrix);
                         ReduceRowsByConstants();
                         valueOfReducingRows = CalculateRowReductionValue();
-                        FindSmallestNumbersInColumns(auxCostMatrix);
+                        FindSmallestNumbersInColumns(currentMatrix);
                         ReduceColumnsByConstants();
                         valueOfReducingColumns = CalculateColumnReductionValue();
                         newTravelCost = currentTravelCost + valueOfReducingRows + valueOfReducingColumns + costMatrixBeforeUpdate[currentVertex, i];
 
-                        if (currentVertexLevel == level || newTravelCost <= optimumNewTravelCost)
-                        {
-                            level++;
-                            optimumNewTravelCost = newTravelCost;
-                            BestCycleCost = optimumNewTravelCost;
-                            optimumVertex = i;
-                        }
-                        CopyMatrixFromTo(costMatrixBeforeUpdate, auxCostMatrix);
+                        NotVisitedVertexes.Add(new Tuple<int, int>(i, newTravelCost));
+                        ListOfCostMatrixes.Add(new Tuple<int, int[,]>(i, currentMatrix));
                     }
                 }
 
+                optimumVertex = GetOptimumVertexIndex();
+                optimumNewTravelCost = valueOfTravelOnLevel;
+                BestCycleCost = optimumNewTravelCost;
+                currentMatrix = GetOptimumCostMatrix(optimumVertex); // tu 
                 visited[optimumVertex] = true;
                 Route.Push(optimumVertex);
-                FindBestAdjacent(currentVertexLevel + 1, startingVertex, optimumVertex, optimumNewTravelCost);
+                NotVisitedVertexes.Clear();
+                ListOfCostMatrixes.Clear();
+                FindBestAdjacent(optimumVertex, optimumNewTravelCost, currentMatrix);
                 visited[optimumVertex] = false;
                 Route.Pop();
             }
             else
             {
-                //optimumNewTravelCost += veryLastOptimumCostMatrix[optimumVertex, startingVertex];
-                //BestCycleCost = optimumNewTravelCost;
                 return;
             }
         }

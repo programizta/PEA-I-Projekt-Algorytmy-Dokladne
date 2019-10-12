@@ -114,7 +114,6 @@ namespace I_Projekt
 
                     SetInfinityOnInaccesiblePlaces();
                     CreateNeighborhoodMatrix();
-                    //RepairMainDiagonal();
                 }
             }
             catch (Exception)
