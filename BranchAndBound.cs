@@ -5,42 +5,35 @@ namespace I_Projekt
 {
     class BranchAndBound : Graph
     {
-        /// <summary>
-        /// Item1 - indeks
-        /// Item2 - koszt drogi
-        /// </summary>
-        public List<Tuple<int, int>> NotVisitedVertexes { get; set; }
-        /// <summary>
-        /// Item1 - indeks
-        /// Item2 - macierz kosztów
-        /// </summary>
-        public List<Tuple<int, int[,]>> ListOfCostMatrixes { get; set; }
         public Stack Route { get; private set; }
+        public List<Travel> ListOfTravelParamsOnLevel;
+        public List<Travel> ListOfSuspiciousVertexParams { get; set; }
         bool[] visited;
         private int[] smallestNumbersInRows;
         private int[] smallestNumbersInColumns;
         public int[,] auxCostMatrix;
-        private bool[,] auxNeighborhoodMatrix;
         int optimumNewTravelCost;
         int[,] costMatrixBeforeUpdate;
-        int optimumVertex;
-        int valueOfTravelOnLevel;
+        int optimumVertexOnCurrentLevel;
+        int optimumVertexOnPreviousLevel;
+        int bestValueOfTravelOnCurrentLevel;
+        int secondBestValueOfTravelOnPreviousLevel;
+        int betterVertex;
         public BranchAndBound(string filename, int choice) : base(filename, choice)
         {
             Route = new Stack();
-            NotVisitedVertexes = new List<Tuple<int, int>>();
-            ListOfCostMatrixes = new List<Tuple<int, int[,]>>();
+            ListOfTravelParamsOnLevel = new List<Travel>();
+            ListOfSuspiciousVertexParams = new List<Travel>();
 
+            betterVertex = -1;
             smallestNumbersInRows = new int[numOfCities];
             smallestNumbersInColumns = new int[numOfCities];
             auxCostMatrix = new int[numOfCities, numOfCities];
-            auxCostMatrix = costMatrix;
-            auxNeighborhoodMatrix = new bool[numOfCities, numOfCities];
-            auxNeighborhoodMatrix = neighborhoodMatrix;
+            CopyMatrixFromTo(costMatrix, auxCostMatrix);
             visited = new bool[numOfCities];
             optimumNewTravelCost = int.MaxValue;
             costMatrixBeforeUpdate = new int[numOfCities, numOfCities];
-            optimumVertex = -1;
+            optimumVertexOnCurrentLevel = -1;
 
             for (int i = 0; i < numOfCities; i++)
             {
@@ -74,39 +67,39 @@ namespace I_Projekt
             return cost;
         }
 
-        private void ReduceRowsByConstants()
+        private void ReduceRowsByConstants(int[,] currentCostMatrix)
         {
             for (int i = 0; i < numOfCities; i++)
             {
                 for (int j = 0; j < numOfCities; j++)
                 {
-                    if (auxCostMatrix[i, j] != int.MaxValue) auxCostMatrix[i, j] -= smallestNumbersInRows[i];
+                    if (currentCostMatrix[i, j] != int.MaxValue) currentCostMatrix[i, j] -= smallestNumbersInRows[i];
                 }
             }
         }
 
-        private void ReduceColumnsByConstants()
+        private void ReduceColumnsByConstants(int[,] currentCostMatrix)
         {
-            for (int i = 0; i < numOfCities; i++)
+            for (int j = 0; j < numOfCities; j++)
             {
-                for (int j = 0; j < numOfCities; j++)
+                for (int i = 0; i < numOfCities; i++)
                 {
-                    if (auxCostMatrix[i, j] != int.MaxValue) auxCostMatrix[i, j] -= smallestNumbersInColumns[j];
+                    if (currentCostMatrix[i, j] != int.MaxValue) currentCostMatrix[i, j] -= smallestNumbersInColumns[j];
                 }
             }
         }
 
-        private void SetInfinityInCell(int numberOfRow, int numberOfColumn)
+        private void SetInfinityInCell(int[,] currentCostMatrix, int numberOfRow, int numberOfColumn)
         {
-            auxCostMatrix[numberOfRow, numberOfColumn] = int.MaxValue;
+            currentCostMatrix[numberOfRow, numberOfColumn] = int.MaxValue;
         }
 
-        private void SetInfinityInRowAndColumn(int numberOfRow, int numberOfColumn)
+        private void SetInfinityInRowAndColumn(int[,] currentCostMatrix, int numberOfRow, int numberOfColumn)
         {
             for (int i = 0; i < numOfCities; i++)
             {
-                auxCostMatrix[numberOfRow, i] = int.MaxValue;
-                auxCostMatrix[i, numberOfColumn] = int.MaxValue;
+                currentCostMatrix[numberOfRow, i] = int.MaxValue;
+                currentCostMatrix[i, numberOfColumn] = int.MaxValue;
             }
         }
 
@@ -114,10 +107,10 @@ namespace I_Projekt
         {
             for (int i = 0; i < numOfCities; i++)
             {
-                smallestNumbersInRows[i] = costMatrix[i, 0];
-                for (int j = 1; j < numOfCities; j++)
+                smallestNumbersInRows[i] = int.MaxValue;
+                for (int j = 0; j < numOfCities; j++)
                 {
-                    if (smallestNumbersInRows[i] > costMatrix[i, j]) smallestNumbersInRows[i] = costMatrix[i, j];
+                    if (costMatrix[i, j] < smallestNumbersInRows[i]) smallestNumbersInRows[i] = costMatrix[i, j];
                 }
             }
 
@@ -131,10 +124,10 @@ namespace I_Projekt
         {
             for (int i = 0; i < numOfCities; i++)
             {
-                smallestNumbersInColumns[i] = costMatrix[0, i];
-                for (int j = 1; j < numOfCities; j++)
+                smallestNumbersInColumns[i] = int.MaxValue;
+                for (int j = 0; j < numOfCities; j++)
                 {
-                    if (smallestNumbersInColumns[i] > costMatrix[j, i]) smallestNumbersInColumns[i] = costMatrix[j, i];
+                    if (costMatrix[j, i] < smallestNumbersInColumns[i]) smallestNumbersInColumns[i] = costMatrix[j, i];
                 }
             }
 
@@ -155,29 +148,41 @@ namespace I_Projekt
             }
         }
 
-        private int GetOptimumVertexIndex()
+        private int ComputeOptimumVertexAndCost(int level, int valueOfTravelOnLevel, bool firstBest)
         {
+            int secondValueOfTravelOnLevel = -1;
+            int auxIndex = -1;
             valueOfTravelOnLevel = int.MaxValue;
             int index = -1;
 
-            foreach (var tuple in NotVisitedVertexes)
+            foreach (var travel in ListOfTravelParamsOnLevel)
             {
-                if (tuple.Item2 <= valueOfTravelOnLevel && !visited[tuple.Item1])
+                if (travel.GetCostOnLevel() <= valueOfTravelOnLevel /*&& !visited[travel.GetIndex()]*/ && travel.GetLevel() == level)
                 {
-                    valueOfTravelOnLevel = tuple.Item2;
-                    index = tuple.Item1;
+                    secondValueOfTravelOnLevel = valueOfTravelOnLevel;
+                    auxIndex = index;
+                    valueOfTravelOnLevel = travel.GetCostOnLevel();
+                    index = travel.GetIndex();
                 }
             }
 
-            return index;
+            if (firstBest)
+            {
+                bestValueOfTravelOnCurrentLevel = valueOfTravelOnLevel;
+                return index;
+            }
+
+            secondBestValueOfTravelOnPreviousLevel = secondValueOfTravelOnLevel;
+            return auxIndex;
         }
 
-        private int[,] GetOptimumCostMatrix(int index)
+        private int[,] GetOptimumCostMatrix(int index, int level)
         {
-            foreach (var tupple in ListOfCostMatrixes)
+            foreach (var travel in ListOfTravelParamsOnLevel)
             {
-                if (tupple.Item1 == index) return tupple.Item2;
+                if (travel.GetIndex() == index && travel.GetLevel() == level) return travel.GetCurrentCostMatrix();
             }
+
             return null;
         }
 
@@ -185,24 +190,23 @@ namespace I_Projekt
         {
             FindSmallestNumbersInRows(auxCostMatrix);
             int reducedValueInRows = CalculateRowReductionValue();
-            ReduceRowsByConstants();
+            ReduceRowsByConstants(auxCostMatrix);
             FindSmallestNumbersInColumns(auxCostMatrix);
             int reducedValueInColumns = CalculateColumnReductionValue();
-            ReduceColumnsByConstants();
+            ReduceColumnsByConstants(auxCostMatrix);
             int firstTravelCost = reducedValueInRows + reducedValueInColumns;
             Route.Push(startingVertex);
             visited[startingVertex] = true;
 
-            FindBestAdjacent(0, firstTravelCost, auxCostMatrix);
+            FindBestAdjacent(0, 0, firstTravelCost, 0);
         }
 
-        public void FindBestAdjacent(int currentVertex, int currentTravelCost, int[,] currentMatrix)
+        public void FindBestAdjacent(int startingVertex, int currentVertex, int currentTravelCost, int level)
         {
             int valueOfReducingRows;
             int valueOfReducingColumns;
-            int newTravelCost;
-            CopyMatrixFromTo(currentMatrix, costMatrixBeforeUpdate);
-            int[,] costMatrixOnLevel = new int[numOfCities, numOfCities];
+            int newTravelCost = 0;
+            CopyMatrixFromTo(auxCostMatrix, costMatrixBeforeUpdate);
 
             if (Route.StackSize < numOfCities)
             {
@@ -210,36 +214,56 @@ namespace I_Projekt
                 {
                     if (!visited[i] && currentVertex != i)
                     {
-                        CopyMatrixFromTo(costMatrixBeforeUpdate, currentMatrix);
-                        SetInfinityInRowAndColumn(currentVertex, i);
-                        SetInfinityInCell(i, currentVertex);
-                        FindSmallestNumbersInRows(currentMatrix);
-                        ReduceRowsByConstants();
+                        SetInfinityInRowAndColumn(auxCostMatrix, currentVertex, i);
+                        SetInfinityInCell(auxCostMatrix, currentVertex, startingVertex);
+                        FindSmallestNumbersInRows(auxCostMatrix);
+                        ReduceRowsByConstants(auxCostMatrix);
                         valueOfReducingRows = CalculateRowReductionValue();
-                        FindSmallestNumbersInColumns(currentMatrix);
-                        ReduceColumnsByConstants();
+                        FindSmallestNumbersInColumns(auxCostMatrix);
+                        ReduceColumnsByConstants(auxCostMatrix);
                         valueOfReducingColumns = CalculateColumnReductionValue();
                         newTravelCost = currentTravelCost + valueOfReducingRows + valueOfReducingColumns + costMatrixBeforeUpdate[currentVertex, i];
 
-                        NotVisitedVertexes.Add(new Tuple<int, int>(i, newTravelCost));
-                        ListOfCostMatrixes.Add(new Tuple<int, int[,]>(i, currentMatrix));
+                        ListOfTravelParamsOnLevel.Add(new Travel(i, newTravelCost, numOfCities, auxCostMatrix, level));
+                        CopyMatrixFromTo(costMatrixBeforeUpdate, auxCostMatrix);
                     }
                 }
 
-                optimumVertex = GetOptimumVertexIndex();
-                optimumNewTravelCost = valueOfTravelOnLevel;
+                if (level == 0)
+                {
+                    optimumVertexOnCurrentLevel = ComputeOptimumVertexAndCost(level, bestValueOfTravelOnCurrentLevel, true);
+                    optimumNewTravelCost = bestValueOfTravelOnCurrentLevel;
+                    betterVertex = optimumVertexOnCurrentLevel;
+                }
+                else
+                {
+                    optimumVertexOnCurrentLevel = ComputeOptimumVertexAndCost(level, bestValueOfTravelOnCurrentLevel, true);
+                    optimumVertexOnPreviousLevel = ComputeOptimumVertexAndCost(level - 1, secondBestValueOfTravelOnPreviousLevel, false);
+
+                    if (bestValueOfTravelOnCurrentLevel <= secondBestValueOfTravelOnPreviousLevel)
+                    {
+                        optimumNewTravelCost = bestValueOfTravelOnCurrentLevel;
+                        betterVertex = optimumVertexOnCurrentLevel;
+                    }
+                    else
+                    {
+                        optimumNewTravelCost = secondBestValueOfTravelOnPreviousLevel;
+                        betterVertex = optimumVertexOnPreviousLevel;
+                        level--;
+                    }
+                }
+
                 BestCycleCost = optimumNewTravelCost;
-                currentMatrix = GetOptimumCostMatrix(optimumVertex); // tu 
-                visited[optimumVertex] = true;
-                Route.Push(optimumVertex);
-                NotVisitedVertexes.Clear();
-                ListOfCostMatrixes.Clear();
-                FindBestAdjacent(optimumVertex, optimumNewTravelCost, currentMatrix);
-                visited[optimumVertex] = false;
-                Route.Pop();
+                auxCostMatrix = GetOptimumCostMatrix(betterVertex, level);
+                visited[betterVertex] = true;
+                Route.Push(betterVertex);
+                //ListOfTravelParamsOnLevel.Clear();
+                FindBestAdjacent(startingVertex, betterVertex, optimumNewTravelCost, level + 1);
             }
             else
             {
+                BestCycleCost += auxCostMatrix[Route.Top(), 0];
+                Route.Push(0);
                 return;
             }
         }

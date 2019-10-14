@@ -21,6 +21,7 @@ namespace I_Projekt
 
         public Graph(string filename, int choice)
         {
+            BestCycleCost = int.MaxValue;
             Filename = filename;
             numOfCities = 0;
             xPosition = 0;
@@ -67,10 +68,11 @@ namespace I_Projekt
         {
             for (int i = 0; i < numOfCities; i++)
             {
-                for (int j = 0; j < numOfCities; j++)
+                costMatrix[i, i] = int.MaxValue;
+                /*for (int j = 0; j < numOfCities; j++)
                 {
                     if (costMatrix[i, j] <= 0) costMatrix[i, j] = int.MaxValue;
-                }
+                }*/
             }
         }
 

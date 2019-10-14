@@ -10,7 +10,7 @@ namespace I_Projekt
     {
         public int Value { get; private set; }
         public int StackSize { get; private set; }
-        int[] Numbers;
+        public int[] numbersOnStack;
 
         public Stack()
         {
@@ -27,11 +27,11 @@ namespace I_Projekt
 
             for (int i = 1; i < auxStackSize; i++)
             {
-                auxNumbers[i] = Numbers[i - 1];
+                auxNumbers[i] = numbersOnStack[i - 1];
             }
 
             StackSize = auxStackSize;
-            Numbers = auxNumbers;
+            numbersOnStack = auxNumbers;
         }
 
         public void Pop()
@@ -41,40 +41,24 @@ namespace I_Projekt
 
             for (int i = 0; i < auxStackSize; i++)
             {
-                auxNumbers[i] = Numbers[i + 1];
+                auxNumbers[i] = numbersOnStack[i + 1];
             }
 
             StackSize = auxStackSize;
-            Numbers = auxNumbers;
-        }
-
-        public bool Empty()
-        {
-            if (StackSize == 0) return true;
-            return false;
+            numbersOnStack = auxNumbers;
         }
 
         public int Top()
         {
-            return Numbers[0];
-        }
-
-        public int Bottom()
-        {
-            if (StackSize > 0) return Numbers[StackSize - 1];
-            else return -1;
-        }
-
-        public int Position(int index)
-        {
-            return Numbers[index];
+            return numbersOnStack[0];
         }
 
         public void Display()
         {
             for (int i = StackSize - 1; i >= 0; i--)
             {
-                Console.Write(Numbers[i] + " -> ");
+                if (i > 0) Console.Write(numbersOnStack[i] + " -> ");
+                else Console.Write(numbersOnStack[i]);
             }
         }
     }
