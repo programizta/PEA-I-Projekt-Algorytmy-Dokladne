@@ -55,8 +55,10 @@
 
                 if (auxCycleCost < BestCycleCost)
                 {
+                    Route.Clear();
                     BestCycleCost = auxCycleCost;
-                    Route = AuxRoute;
+                    Route.CopyFrom(AuxRoute);
+                    Route.Push(startingVerticle);
                 }
                 auxCycleCost -= costMatrix[currentVerticle, startingVerticle];
             }

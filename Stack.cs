@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace I_Projekt
 {
     class Stack
     {
-        public int Value { get; private set; }
         public int StackSize { get; private set; }
-        public int[] numbersOnStack;
+        private int[] numbersOnStack;
 
         public Stack()
         {
-            Value = 0;
             StackSize = 0;
         }
 
@@ -60,6 +54,36 @@ namespace I_Projekt
                 if (i > 0) Console.Write(numbersOnStack[i] + " -> ");
                 else Console.Write(numbersOnStack[i]);
             }
+        }
+
+        public void CopyFrom(Stack stack)
+        {
+            for (int i = stack.StackSize - 1; i >= 0; i--)
+            {
+                Push(stack.numbersOnStack[i]);
+            }
+        }
+
+        public void Clear()
+        {
+            while (StackSize > 0)
+            {
+                Pop();
+            }
+        }
+
+        public void Reverse()
+        {
+            int[] auxNumbers = new int[StackSize];
+            int i = 0;
+
+            while (i <= StackSize)
+            {
+                auxNumbers[i] = numbersOnStack[StackSize - i];
+                i++;
+            }
+
+            numbersOnStack = auxNumbers;
         }
     }
 }

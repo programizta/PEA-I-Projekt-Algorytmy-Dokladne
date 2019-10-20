@@ -69,10 +69,6 @@ namespace I_Projekt
             for (int i = 0; i < numOfCities; i++)
             {
                 costMatrix[i, i] = int.MaxValue;
-                /*for (int j = 0; j < numOfCities; j++)
-                {
-                    if (costMatrix[i, j] <= 0) costMatrix[i, j] = int.MaxValue;
-                }*/
             }
         }
 

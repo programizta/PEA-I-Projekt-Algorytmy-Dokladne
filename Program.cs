@@ -83,7 +83,7 @@ namespace I_Projekt
                             BruteForce bf = new BruteForce(g.Filename, 0);
                             bf.StartBruteForce(0);
                             Console.WriteLine("Najlepszy cykl ma wagę: " + bf.BestCycleCost);
-                            Console.WriteLine("\n Optymalny cykl:");
+                            Console.WriteLine("Optymalny cykl:");
                             bf.Route.Display();
                             Console.WriteLine("\nKoniec. Aby wrócić do głównego menu, kliknij dowolny klawisz...");
                             Console.ReadKey();
@@ -94,8 +94,8 @@ namespace I_Projekt
                             BranchAndBound bb = new BranchAndBound(g.Filename, 0);
                             bb.StartBranchAndBound(0);
                             Console.WriteLine("Najlepszy cykl ma wagę: " + bb.BestCycleCost);
+                            Console.WriteLine("Optymalny cykl:");
                             bb.Route.Display();
-                            Console.WriteLine("\n\n Optymalny cykl:");
                             Console.WriteLine("\nKoniec. Aby wrócić do głównego menu, kliknij dowolny klawisz...");
                             Console.ReadKey();
                             break;
@@ -105,8 +105,8 @@ namespace I_Projekt
                             DynamicProgramming dp = new DynamicProgramming(g.Filename, 0);
                             dp.StartDynamicProgramming(0);
                             Console.WriteLine("Najlepszy cykl ma wagę: " + dp.BestCycleCost);
+                            Console.WriteLine("Optymalny cykl:");
                             dp.Route.Display();
-                            Console.WriteLine("\n\n Optymalny cykl:");
                             Console.WriteLine("\nKoniec. Aby wrócić do głównego menu, kliknij dowolny klawisz...");
                             Console.ReadKey();
                             break;

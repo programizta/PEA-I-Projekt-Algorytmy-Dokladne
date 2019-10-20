@@ -157,7 +157,7 @@ namespace I_Projekt
 
             foreach (var travel in ListOfTravelParamsOnLevel)
             {
-                if (travel.GetCostOnLevel() <= valueOfTravelOnLevel /*&& !visited[travel.GetIndex()]*/ && travel.GetLevel() == level)
+                if (travel.GetCostOnLevel() <= valueOfTravelOnLevel && travel.GetLevel() == level)
                 {
                     secondValueOfTravelOnLevel = valueOfTravelOnLevel;
                     auxIndex = index;
@@ -248,8 +248,9 @@ namespace I_Projekt
                     else
                     {
                         optimumNewTravelCost = secondBestValueOfTravelOnPreviousLevel;
+                        visited[optimumVertexOnCurrentLevel] = false;
                         betterVertex = optimumVertexOnPreviousLevel;
-                        level--;
+                        //level++;
                     }
                 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace I_Projekt
 {
@@ -7,21 +8,21 @@ namespace I_Projekt
         public Stack Route { get; private set; }
         private readonly int allVisitedVerticesMask;
         private int startingVertex;
-        private int[,] allVerticlesSubsets;
+        private int[,] allVerticesSubsets;
         private int[,] previousStateOfAllVertices;
 
         public DynamicProgramming(string filename, int choice) : base(filename, choice)
         {
             Route = new Stack();
             allVisitedVerticesMask = (1 << numOfCities) - 1;
-            allVerticlesSubsets = new int[numOfCities, 1 << numOfCities];
+            allVerticesSubsets = new int[numOfCities, 1 << numOfCities];
             previousStateOfAllVertices = new int[numOfCities, 1 << numOfCities];
 
             for (int i = 0; i < numOfCities; i++)
             {
                 for (int j = 0; j < allVisitedVerticesMask + 1; j++)
                 {
-                    allVerticlesSubsets[i, j] = int.MaxValue;
+                    allVerticesSubsets[i, j] = int.MaxValue;
                     previousStateOfAllVertices[i, j] = int.MaxValue;
                 }
             }
@@ -39,8 +40,7 @@ namespace I_Projekt
                 Route.Push(index);
                 int nextIndex = previousStateOfAllVertices[index, currentStateOfVertices];
                 if (nextIndex == int.MaxValue) break;
-                int nextSubProblemState = currentStateOfVertices | (1 << nextIndex);
-                currentStateOfVertices = nextSubProblemState;
+                currentStateOfVertices = currentStateOfVertices | (1 << nextIndex);
                 index = nextIndex;
             }
 
@@ -50,13 +50,17 @@ namespace I_Projekt
         private int StartDP(int currentVertex, int currentVerticesStateMask)
         {
             if (currentVerticesStateMask == allVisitedVerticesMask) return costMatrix[currentVertex, startingVertex];
-            if (allVerticlesSubsets[currentVertex, currentVerticesStateMask] != int.MaxValue) return allVerticlesSubsets[currentVertex, currentVerticesStateMask];
+
+            // jeśli wartość ścieżki została obliczona wcześniej to zwróć ją
+            if (allVerticesSubsets[currentVertex, currentVerticesStateMask] != int.MaxValue) return allVerticesSubsets[currentVertex, currentVerticesStateMask];
 
             int minimumCostOfTravel = int.MaxValue;
             int currentVertexIndex = -1;
 
             for (int i = 0; i < numOfCities; i++)
             {
+                // opuść obliczanie wartości trasy jeśli ten wierzchołek
+                // został już odwiedzony wcześniej
                 if ((currentVerticesStateMask & (1 << i)) != 0) continue;
 
                 int nextStateMask = currentVerticesStateMask | (1 << i);
@@ -70,9 +74,9 @@ namespace I_Projekt
             }
 
             previousStateOfAllVertices[currentVertex, currentVerticesStateMask] = currentVertexIndex;
-            allVerticlesSubsets[currentVertex, currentVerticesStateMask] = minimumCostOfTravel;
+            allVerticesSubsets[currentVertex, currentVerticesStateMask] = minimumCostOfTravel;
 
-            return allVerticlesSubsets[currentVertex, currentVerticesStateMask];
+            return allVerticesSubsets[currentVertex, currentVerticesStateMask];
         }
     }
 }
