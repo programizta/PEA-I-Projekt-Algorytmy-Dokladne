@@ -12,14 +12,12 @@ namespace I_Projekt
         int costOnLevel;
         int[,] currentCostMatrix;
         int matrixSize;
-        int level;
 
-        public Travel(int index, int costOnLevel, int matrixSize, int[,] matrixCost, int level)
+        public Travel(int index, int costOnLevel, int matrixSize, int[,] matrixCost)
         {
             this.index = index;
             this.matrixSize = matrixSize;
             this.costOnLevel = costOnLevel;
-            this.level = level;
 
             currentCostMatrix = new int[matrixSize, matrixSize];
             InitializeMatrix(matrixCost);
@@ -39,11 +37,6 @@ namespace I_Projekt
         public int GetIndex()
         {
             return index;
-        }
-
-        public int GetLevel()
-        {
-            return level;
         }
 
         public int GetCostOnLevel()

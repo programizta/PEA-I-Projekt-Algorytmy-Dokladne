@@ -5,7 +5,7 @@
         public Stack Route { get; private set; }
         public Stack AuxRoute { get; private set; }
         bool[] visited;
-        readonly int startingVerticle;
+        int startingVertex;
         int auxCycleCost;
 
         public BruteForce(string filename, int choice) : base(filename, choice)
@@ -15,7 +15,7 @@
             InitializeVisitTable();
             AuxRoute = new Stack();
             auxCycleCost = 0;
-            startingVerticle = 0;
+            startingVertex = 0;
         }
 
         private void InitializeVisitTable()
@@ -28,37 +28,44 @@
             }
         }
 
-        public void StartBruteForce(int currentVerticle)
+        public void SetStartingVertex(int startingVertex)
+        {
+            this.startingVertex = startingVertex;
+        }
+
+        public void StartBruteForce(int currentVertex)
         {
             int i;
 
-            AuxRoute.Push(currentVerticle);
+            AuxRoute.Push(currentVertex);
 
             if (AuxRoute.StackSize < numOfCities)
             {
-                visited[currentVerticle] = true;
+                visited[currentVertex] = true;
 
                 for (i = 0; i < numOfCities; i++)
                 {
-                    if (neighborhoodMatrix[currentVerticle, i] && !visited[i])
+                    if (neighborhoodMatrix[currentVertex, i] && !visited[i])
                     {
-                        auxCycleCost += costMatrix[currentVerticle, i];
+                        auxCycleCost += costMatrix[currentVertex, i];
                         StartBruteForce(i);
-                        auxCycleCost -= costMatrix[currentVerticle, i];
+                        auxCycleCost -= costMatrix[currentVertex, i];
                     }
                 }
-                visited[currentVerticle] = false;
+                visited[currentVertex] = false;
             }
-            else if(neighborhoodMatrix[startingVerticle, currentVerticle])
+            else if(neighborhoodMatrix[startingVertex, currentVertex])
             {
-                auxCycleCost += costMatrix[currentVerticle, startingVerticle];
+                auxCycleCost += costMatrix[currentVertex, startingVertex];
 
                 if (auxCycleCost < BestCycleCost)
                 {
+                    Route.Clear();
                     BestCycleCost = auxCycleCost;
-                    Route = AuxRoute;
+                    Route.CopyFrom(AuxRoute);
+                    Route.Push(startingVertex);
                 }
-                auxCycleCost -= costMatrix[currentVerticle, startingVerticle];
+                auxCycleCost -= costMatrix[currentVertex, startingVertex];
             }
             AuxRoute.Pop();
         }
