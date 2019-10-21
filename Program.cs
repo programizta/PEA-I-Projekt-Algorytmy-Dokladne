@@ -164,18 +164,36 @@ namespace I_Projekt
                         }
                     case 6:
                         {
+<<<<<<< HEAD
                             DynamicProgramming dp = new DynamicProgramming(g.Filename, choice);
                             dp.StartDynamicProgramming(0);
                             Console.WriteLine("Najlepszy cykl ma wagę: " + dp.BestCycleCost);
                             Console.WriteLine("Optymalny cykl:");
                             dp.Route.Display();
+=======
+                            BranchAndBound bb = new BranchAndBound(g.Filename, 0);
+                            bb.StartBranchAndBound(0);
+                            Console.WriteLine("Najlepszy cykl ma wagę: " + bb.BestCycleCost);
+                            Console.WriteLine("Optymalny cykl:");
+                            bb.Route.Display();
+>>>>>>> 59beb6fb01648f14092ca129599744a993e53714
                             Console.WriteLine("\nKoniec. Aby wrócić do głównego menu, kliknij dowolny klawisz...");
                             Console.ReadKey();
                             break;
                         }
                     case 7:
                         {
+<<<<<<< HEAD
                             Tests();
+=======
+                            DynamicProgramming dp = new DynamicProgramming(g.Filename, 0);
+                            dp.StartDynamicProgramming(0);
+                            Console.WriteLine("Najlepszy cykl ma wagę: " + dp.BestCycleCost);
+                            Console.WriteLine("Optymalny cykl:");
+                            dp.Route.Display();
+                            Console.WriteLine("\nKoniec. Aby wrócić do głównego menu, kliknij dowolny klawisz...");
+                            Console.ReadKey();
+>>>>>>> 59beb6fb01648f14092ca129599744a993e53714
                             break;
                         }
                     case 8:
