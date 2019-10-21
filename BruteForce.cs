@@ -63,11 +63,7 @@
                     Route.Clear();
                     BestCycleCost = auxCycleCost;
                     Route.CopyFrom(AuxRoute);
-<<<<<<< HEAD
                     Route.Push(startingVertex);
-=======
-                    Route.Push(startingVerticle);
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
                 }
                 auxCycleCost -= costMatrix[currentVertex, startingVertex];
             }

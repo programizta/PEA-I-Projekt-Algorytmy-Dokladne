@@ -9,33 +9,21 @@ namespace I_Projekt
         private readonly int allVisitedVerticesMask;
         private int startingVertex;
         private int[,] allVerticesSubsets;
-<<<<<<< HEAD
         private int[,] subPathIndexes;
-=======
-        private int[,] previousStateOfAllVertices;
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
 
         public DynamicProgramming(string filename, int choice) : base(filename, choice)
         {
             Route = new Stack();
             allVisitedVerticesMask = (1 << numOfCities) - 1;
             allVerticesSubsets = new int[numOfCities, 1 << numOfCities];
-<<<<<<< HEAD
             subPathIndexes = new int[numOfCities, 1 << numOfCities];
-=======
-            previousStateOfAllVertices = new int[numOfCities, 1 << numOfCities];
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
 
             for (int i = 0; i < numOfCities; i++)
             {
                 for (int j = 0; j < allVisitedVerticesMask + 1; j++)
                 {
                     allVerticesSubsets[i, j] = int.MaxValue;
-<<<<<<< HEAD
                     subPathIndexes[i, j] = int.MaxValue;
-=======
-                    previousStateOfAllVertices[i, j] = int.MaxValue;
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
                 }
             }
         }
@@ -50,14 +38,8 @@ namespace I_Projekt
             for (int i = 0; i < numOfCities; i++)
             {
                 Route.Push(index);
-<<<<<<< HEAD
                 int nextIndex = subPathIndexes[index, currentStateOfVertices];
                 currentStateOfVertices |= 1 << nextIndex;
-=======
-                int nextIndex = previousStateOfAllVertices[index, currentStateOfVertices];
-                if (nextIndex == int.MaxValue) break;
-                currentStateOfVertices = currentStateOfVertices | (1 << nextIndex);
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
                 index = nextIndex;
             }
 
@@ -90,11 +72,7 @@ namespace I_Projekt
                 }
             }
 
-<<<<<<< HEAD
             subPathIndexes[currentVertex, currentVerticesStateMask] = currentVertexIndex;
-=======
-            previousStateOfAllVertices[currentVertex, currentVerticesStateMask] = currentVertexIndex;
->>>>>>> 59beb6fb01648f14092ca129599744a993e53714
             allVerticesSubsets[currentVertex, currentVerticesStateMask] = minimumCostOfTravel;
 
             return allVerticesSubsets[currentVertex, currentVerticesStateMask];
