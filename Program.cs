@@ -96,11 +96,10 @@ namespace I_Projekt
                 Console.WriteLine("1. Wczytaj małą macierz grafu");
                 Console.WriteLine("2. Wczytaj dużą macierz grafu");
                 Console.WriteLine("3. Wyświetl macierz kosztów");
-                Console.WriteLine("4. Wyświetl macierz sąsiedztwa");
-                Console.WriteLine("5. Rozwiąż problem komiwojażera za pomocą metody Brute Force");
-                Console.WriteLine("6. Rozwiąż problem komiwojażera za pomocą metody programowania dynamicznego");
-                Console.WriteLine("7. Przeprowadź testy seryjne");
-                Console.WriteLine("8. Zakończ działanie programu\n");
+                Console.WriteLine("4. Rozwiąż problem komiwojażera za pomocą metody Brute Force");
+                Console.WriteLine("5. Rozwiąż problem komiwojażera za pomocą metody programowania dynamicznego");
+                Console.WriteLine("6. Przeprowadź testy seryjne");
+                Console.WriteLine("7. Zakończ działanie programu\n");
                 Console.Write("Którą opcję chcesz wybrać? Podaj numer: ");
                 numOfChoice = int.Parse(Console.ReadLine());
 
@@ -141,21 +140,11 @@ namespace I_Projekt
                         }
                     case 4:
                         {
-                            Console.Clear();
-                            if (g.GetNumberOfCities() != 0) g.DisplayNeighborhoodMatrix();
-                            else Console.WriteLine("Nie wczytano żadnego grafu do programu!");
-                            Console.Write("\nAby kontynuować kliknij [ENTER]");
-                            Console.ReadKey();
-                            break;
-                        }
-                    case 5:
-                        {
                             BruteForce bf = new BruteForce(g.Filename, 0);
 
-                            // by zadeklarować konkretny wierzchołek początkowy należy zmienić
-                            // na zgodną wartość podawane liczby, będące numerem początkowego wierzchołka
+                            // deklaracja początkowego wierzchołka
                             bf.SetStartingVertex(0);
-                            bf.StartBruteForce(0);
+                            bf.StartBruteForce(bf.GetStartingVertex());
                             Console.WriteLine("Najlepszy cykl ma wagę: " + bf.BestCycleCost);
                             Console.WriteLine("Optymalny cykl:");
                             bf.Route.Display();
@@ -163,9 +152,10 @@ namespace I_Projekt
                             Console.ReadKey();
                             break;
                         }
-                    case 6:
+                    case 5:
                         {
                             DynamicProgramming dp = new DynamicProgramming(g.Filename, choice);
+                            // deklaracja początkowego wierzchołka
                             dp.StartDynamicProgramming(0);
                             Console.WriteLine("Najlepszy cykl ma wagę: " + dp.BestCycleCost);
                             Console.WriteLine("Optymalny cykl:");
@@ -174,12 +164,12 @@ namespace I_Projekt
                             Console.ReadKey();
                             break;
                         }
-                    case 7:
+                    case 6:
                         {
                             Tests();
                             break;
                         }
-                    case 8:
+                    case 7:
                         {
                             Console.Write("\nZakończono działanie programu\nAby kontynuować kliknij [ENTER]");
                             Console.ReadKey();

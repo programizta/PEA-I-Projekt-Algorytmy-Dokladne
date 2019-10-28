@@ -42,11 +42,6 @@ namespace I_Projekt
             numbersOnStack = auxNumbers;
         }
 
-        public int Top()
-        {
-            return numbersOnStack[0];
-        }
-
         public void Display()
         {
             for (int i = StackSize - 1; i >= 0; i--)
@@ -70,20 +65,6 @@ namespace I_Projekt
             {
                 Pop();
             }
-        }
-
-        public void Reverse()
-        {
-            int[] auxNumbers = new int[StackSize];
-            int i = 0;
-
-            while (i <= StackSize)
-            {
-                auxNumbers[i] = numbersOnStack[StackSize - i];
-                i++;
-            }
-
-            numbersOnStack = auxNumbers;
         }
     }
 }

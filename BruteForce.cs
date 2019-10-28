@@ -33,6 +33,11 @@
             this.startingVertex = startingVertex;
         }
 
+        public int GetStartingVertex()
+        {
+            return startingVertex;
+        }
+
         public void StartBruteForce(int currentVertex)
         {
             int i;
@@ -45,7 +50,7 @@
 
                 for (i = 0; i < numOfCities; i++)
                 {
-                    if (neighborhoodMatrix[currentVertex, i] && !visited[i])
+                    if (!visited[i])
                     {
                         auxCycleCost += costMatrix[currentVertex, i];
                         StartBruteForce(i);
@@ -54,7 +59,7 @@
                 }
                 visited[currentVertex] = false;
             }
-            else if(neighborhoodMatrix[startingVertex, currentVertex])
+            else
             {
                 auxCycleCost += costMatrix[currentVertex, startingVertex];
 

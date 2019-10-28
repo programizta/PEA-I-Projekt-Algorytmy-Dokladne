@@ -7,7 +7,6 @@ namespace I_Projekt
     {
         protected int numOfCities;
         protected int[,] costMatrix;
-        protected bool[,] neighborhoodMatrix;
         public int BestCycleCost { get; protected set; }
         string[] allNumbers;
         public string _absoluteDirectory { get; protected set; }
@@ -50,18 +49,14 @@ namespace I_Projekt
                 if (allNumbers is null || allNumbers.Equals("")) throw new Exception("Taki plik nie istnieje!");
 
                 int.TryParse(allNumbers[0], out numOfCities);
-                neighborhoodMatrix = new bool[numOfCities, numOfCities];
                 costMatrix = new int[numOfCities, numOfCities];
                 CreateCostMatrix();
                 SetInfinityOnInaccesiblePlaces();
-                CreateNeighborhoodMatrix();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
-            CreateNeighborhoodMatrix();
         }
 
         protected void SetInfinityOnInaccesiblePlaces()
@@ -96,7 +91,6 @@ namespace I_Projekt
                             bool tryToParse = TryToParseNumberOfCities(lineTextArray);
                             if (tryToParse)
                             {
-                                neighborhoodMatrix = new bool[numOfCities, numOfCities];
                                 costMatrix = new int[numOfCities, numOfCities];
                                 parsedNumOfCities = true;
                             }
@@ -106,12 +100,9 @@ namespace I_Projekt
                         {
                             ParseNumbersToMatrix(lineTextArray);
                         }
-
-
                     } while (!endParsingFromFile);
 
                     SetInfinityOnInaccesiblePlaces();
-                    CreateNeighborhoodMatrix();
                 }
             }
             catch (Exception)
@@ -176,18 +167,6 @@ namespace I_Projekt
             }
         }
 
-        protected void CreateNeighborhoodMatrix()
-        {
-            for (int i = 0; i < numOfCities; i++)
-            {
-                for (int j = 0; j < numOfCities; j++)
-                {
-                    if (costMatrix[i, j] != int.MaxValue) neighborhoodMatrix[i, j] = true;
-                    else neighborhoodMatrix[i, j] = false;
-                }
-            }
-        }
-
         public int GetNumberOfCities()
         {
             return numOfCities;
@@ -201,19 +180,6 @@ namespace I_Projekt
                 {
                     if (costMatrix[i, j] == int.MaxValue) Console.Write(0 + " ");
                     else Console.Write(costMatrix[i, j] + " ");
-                }
-                Console.Write(Environment.NewLine);
-            }
-        }
-
-        public void DisplayNeighborhoodMatrix()
-        {
-            for (int i = 0; i < numOfCities; i++)
-            {
-                for (int j = 0; j < numOfCities; j++)
-                {
-                    if (neighborhoodMatrix[i, j]) Console.Write("1 ");
-                    else Console.Write("0 ");
                 }
                 Console.Write(Environment.NewLine);
             }
